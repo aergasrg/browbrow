@@ -1,0 +1,14 @@
+{
+  "name": "browbrow-pulse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Heart rate from your face, in the browser. Remote photoplethysmography with MediaPipe face tracking.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\"",
+    "typecheck": "npx -y -p typescript@6.0.2 tsc -p jsconfig.json",
+    "e2e": "node tests/e2e/Demo.e2e.mjs",
+    "geometry": "node tools/GenerateFaceGeometry.mjs",
+    "check": "npm test && npm run typecheck"
+  }
+}

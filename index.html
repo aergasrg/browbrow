@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>browbrow pulse</title>
+    <meta name="description" content="Your heart rate, read from your face. Remote photoplethysmography in the browser. Runs entirely on your device." />
+    <meta name="theme-color" content="#06090d" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Pulse" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-180.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="styles/app.css" />
+    <script type="module" src="src/Main.js"></script>
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5s-7.6-4.6-9.5-9.3C1 7.6 3.3 4 7 4c2.1 0 3.6 1.1 5 2.9C13.4 5.1 14.9 4 17 4c3.7 0 6 3.6 4.5 7.2-1.9 4.7-9.5 9.3-9.5 9.3z" /></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.8l1.4-2h6.6l1.4 2h1.8A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z" /><circle cx="12" cy="13" r="3.6" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4" /></symbol>
+      <symbol id="i-still" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.2" /><path d="M5.5 20.5c.6-3.9 3.2-6.2 6.5-6.2s5.9 2.3 6.5 6.2" /><path d="M2.5 9.5h2M19.5 9.5h2" /></symbol>
+      <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3.5 16.5 16.5 3.5l4 4-13 13z" /><path d="m7 13 1.8 1.8M10 10l1.8 1.8M13 7l1.8 1.8" /></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2" /><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" /></symbol>
+      <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9.5 3h5M10.5 3v6L5 18.5A1.7 1.7 0 0 0 6.5 21h11a1.7 1.7 0 0 0 1.5-2.5L13.5 9V3" /><path d="M7.5 15h9" /></symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M19.4 13.5a7.7 7.7 0 0 0 0-3l2-1.5-2-3.4-2.3.9a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.5a7.6 7.6 0 0 0-2.6 1.5l-2.3-.9-2 3.4 2 1.5a7.7 7.7 0 0 0 0 3l-2 1.5 2 3.4 2.3-.9c.8.7 1.6 1.2 2.6 1.5l.5 2.5h4l.5-2.5c1-.3 1.8-.8 2.6-1.5l2.3.9 2-3.4z" /></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" /></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" /></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M4.5 12.5 9.5 17.5 19.5 6.5" /></symbol>
+      <symbol id="i-tap" viewBox="0 0 24 24"><path d="M9 11V5.5a1.8 1.8 0 0 1 3.6 0V11" /><path d="M12.6 10.5a1.8 1.8 0 0 1 3.6 0v1a1.8 1.8 0 0 1 3.3 1v3c0 3-2.2 5.5-5.5 5.5h-1.5c-2 0-3.3-.8-4.5-2.3L4.8 15a1.7 1.7 0 0 1 2.6-2.2L9 14.5" /></symbol>
+      <symbol id="i-light" viewBox="0 0 24 24"><path d="M9 18.5h6M10 21.5h4" /><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.5.4.8 1 .8 1.7v.5h6V16c0-.7.3-1.3.8-1.7A6.5 6.5 0 0 0 12 2.5z" /></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M8.5 6.5h12M8.5 12h12M8.5 17.5h12" /><circle cx="4.2" cy="6.5" r="1" /><circle cx="4.2" cy="12" r="1" /><circle cx="4.2" cy="17.5" r="1" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v11M7 10l5 5 5-5M4.5 17.5v2a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-2" /></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4" /></symbol>
+      <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12h4l2-5 3.5 11 3-8 1.5 2h5" /></symbol>
+      <symbol id="i-lungs" viewBox="0 0 24 24"><path d="M12 3.5v7.5M12 11c-1 1.5-2.5 2-3.5 2M12 11c1 1.5 2.5 2 3.5 2" /><path d="M8.5 7C6 7.5 3.5 11 3.5 16.5c0 2.2 1.2 3.5 3 3.5 2.4 0 3.5-2 3.5-5V8.5M15.5 7c2.5.5 5 4 5 9.5 0 2.2-1.2 3.5-3 3.5-2.4 0-3.5-2-3.5-5V8.5" /></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24"><path d="M3 17.5 8.5 12l3.5 3.5 8.5-9" /><path d="M15.5 6.5h5v5" /></symbol>
+      <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.5 18.5a9 9 0 1 1 15 0" /><path d="m12 13.5 4-5" /><circle cx="12" cy="13.5" r="1.4" /></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></symbol>
+      <symbol id="i-mesh" viewBox="0 0 24 24"><path d="M12 3 4 8v8l8 5 8-5V8z" /><path d="M4 8l8 5 8-5M12 13v8M4 16l8-8 8 8" /></symbol>
+      <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2" /><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21" /></symbol>
+      <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3.5 5h17l-6.5 8v5.5l-4 2V13z" /></symbol>
+      <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.3-1-1.6-1-2.8 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z" /><circle cx="7.5" cy="11" r="1.1" /><circle cx="10" cy="7" r="1.1" /><circle cx="15" cy="7.2" r="1.1" /></symbol>
+      <symbol id="i-bars" viewBox="0 0 24 24"><path d="M5 20V12M10 20V6M15 20v-9M20 20V4" /></symbol>
+      <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" /><path d="M7 12h10" /></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><path d="M12 11v5.5M12 7.8v.2" /></symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" /></symbol>
+    </svg>
+
+    <div class="app" id="app" data-screen="start">
+      <!-- Start screen -->
+      <section class="start" id="start-screen" aria-labelledby="start-title">
+        <canvas class="start-ecg" id="start-ecg" aria-hidden="true"></canvas>
+        <div class="start-inner">
+          <div class="brand">
+            <svg class="brand-mark"><use href="#i-heart" /></svg>
+            <span>browbrow</span><em>pulse</em>
+          </div>
+          <h1 id="start-title">Your heart rate,<br /><span class="grad">read from your face.</span></h1>
+          <p class="lede">
+            Every heartbeat pushes blood into your skin and changes its color very slightly. Your eyes can't see it; your camera can.
+            No watch, no finger on the lens.
+          </p>
+          <ol class="tips">
+            <li>
+              <span class="tip-icon"><svg class="icon"><use href="#i-sun" /></svg></span>
+              <b>Face a light</b><span>A window or lamp in front of you</span>
+            </li>
+            <li>
+              <span class="tip-icon"><svg class="icon"><use href="#i-still" /></svg></span>
+              <b>Hold still</b><span>Relax and breathe normally</span>
+            </li>
+            <li>
+              <span class="tip-icon"><svg class="icon"><use href="#i-ruler" /></svg></span>
+              <b>Arm's length</b><span>About 40 to 60 cm away</span>
+            </li>
+          </ol>
+          <div class="start-actions">
+            <button class="button primary big" id="start-button" type="button">
+              <svg class="icon"><use href="#i-camera" /></svg><span>Start measuring</span>
+            </button>
+            <button class="button ghost" id="demo-button" type="button">
+              <svg class="icon"><use href="#i-play" /></svg><span>Try the demo</span>
+            </button>
+          </div>
+          <div class="load-progress" id="load-progress" hidden>
+            <div class="load-bar"><i id="load-bar-fill"></i></div>
+            <span id="load-label">Starting camera…</span>
+          </div>
+          <div class="notice" id="start-error" role="alert" hidden></div>
+          <p class="privacy"><svg class="icon"><use href="#i-lock" /></svg>Runs entirely on your device. Video never leaves your phone.</p>
+          <p class="fineprint">Not a medical device. Built for curiosity and learning.</p>
+        </div>
+      </section>
+
+      <!-- Monitor -->
+      <div class="monitor" id="monitor" hidden>
+        <header class="topbar">
+          <div class="brand small">
+            <svg class="brand-mark"><use href="#i-heart" /></svg>
+            <span>browbrow</span><em>pulse</em>
+          </div>
+          <div class="topbar-bpm" id="topbar-bpm" aria-hidden="true">
+            <svg class="icon"><use href="#i-heart" /></svg><b id="topbar-bpm-value">--</b><small>BPM</small>
+          </div>
+          <div class="live-pill" id="live-pill"><i></i><span id="live-label">LIVE</span></div>
+          <button class="icon-button" id="lab-jump" type="button" aria-label="Jump to Algorithm Lab" title="Algorithm Lab">
+            <svg class="icon"><use href="#i-flask" /></svg>
+          </button>
+          <button class="icon-button" id="settings-button" type="button" aria-label="Settings" title="Settings">
+            <svg class="icon"><use href="#i-gear" /></svg>
+          </button>
+        </header>
+
+        <main class="grid" id="grid">
+          <!-- Camera -->
+          <section class="card camera-card" aria-label="Camera">
+            <div class="stage" id="stage">
+              <video id="video" playsinline muted autoplay></video>
+              <canvas class="stage-layer" id="magnify-canvas" hidden></canvas>
+              <canvas class="stage-layer" id="overlay-canvas"></canvas>
+              <div class="stage-scan" id="stage-scan" aria-hidden="true"></div>
+              <div class="stage-chips" id="stage-chips">
+                <span class="chip" data-check="Lighting"><svg class="icon"><use href="#i-sun" /></svg><b>Light</b></span>
+                <span class="chip" data-check="Motion"><svg class="icon"><use href="#i-still" /></svg><b>Motion</b></span>
+                <span class="chip" data-check="Distance"><svg class="icon"><use href="#i-ruler" /></svg><b>Distance</b></span>
+                <span class="chip mono" id="fps-chip"><b>-- fps</b></span>
+              </div>
+              <div class="stage-hint" id="stage-hint">
+                <svg class="icon"><use href="#i-scan" /></svg><span id="stage-hint-text">Looking for your face…</span>
+              </div>
+              <div class="stage-bottom">
+                <div class="segmented" id="view-switch" role="radiogroup" aria-label="Camera view">
+                  <button type="button" role="radio" data-view="Normal" aria-checked="true">Normal</button>
+                  <button type="button" role="radio" data-view="Pulse" aria-checked="false">Pulse</button>
+                  <button type="button" role="radio" data-view="Magnify" aria-checked="false">Magnify</button>
+                </div>
+              </div>
+            </div>
+            <div class="region-legend" id="region-legend">
+              <div class="region-row" data-region="Forehead"><i></i><span>Forehead</span><div class="meter"><b></b></div><em>--</em></div>
+              <div class="region-row" data-region="LeftCheek"><i></i><span>Left cheek</span><div class="meter"><b></b></div><em>--</em></div>
+              <div class="region-row" data-region="RightCheek"><i></i><span>Right cheek</span><div class="meter"><b></b></div><em>--</em></div>
+            </div>
+            <p class="stage-advice" id="stage-advice" aria-live="polite"></p>
+          </section>
+
+          <!-- Heart rate -->
+          <section class="card hero-card" id="hero-card" aria-label="Heart rate">
+            <div class="dial" id="dial">
+              <svg class="dial-ring" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ring-gradient" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="var(--pulse)" />
+                    <stop offset="1" stop-color="#ff8a5c" />
+                  </linearGradient>
+                </defs>
+                <g id="dial-ticks"></g>
+                <circle class="dial-track" cx="100" cy="100" r="84" />
+                <circle class="dial-progress" id="dial-progress" cx="100" cy="100" r="84" />
+              </svg>
+              <div class="dial-center">
+                <svg class="heart" id="heart"><use href="#i-heart" /></svg>
+                <div class="bpm" id="bpm-value">--</div>
+                <div class="bpm-unit">BPM</div>
+              </div>
+            </div>
+            <div class="hero-side">
+              <div class="hero-status" id="hero-status">Waiting for a face</div>
+              <dl class="hero-stats">
+                <div><dt>Min</dt><dd id="stat-min">--</dd></div>
+                <div><dt>Avg</dt><dd id="stat-avg">--</dd></div>
+                <div><dt>Max</dt><dd id="stat-max">--</dd></div>
+              </dl>
+              <div class="hero-tags">
+                <span class="tag" id="trend-tag"><svg class="icon"><use href="#i-spark" /></svg><b>--</b></span>
+                <span class="tag" id="confidence-tag"><svg class="icon"><use href="#i-gauge" /></svg><b>--</b></span>
+                <span class="tag accent" id="method-tag"><svg class="icon"><use href="#i-flask" /></svg><b>POS</b></span>
+              </div>
+            </div>
+            <div class="sr-only" id="bpm-live" aria-live="polite"></div>
+          </section>
+
+          <!-- Waveform -->
+          <section class="card wave-card" aria-label="Pulse waveform">
+            <header class="card-head">
+              <h2><svg class="icon"><use href="#i-wave" /></svg>Pulse waveform</h2>
+              <div class="card-tools">
+                <button class="toggle" id="raw-toggle" type="button" aria-pressed="false" title="Show the raw color change per channel">RGB</button>
+              </div>
+            </header>
+            <canvas class="chart wave-chart" id="wave-canvas"></canvas>
+            <footer class="card-foot">
+              <span id="wave-foot">Each dot is a detected heartbeat</span>
+              <span class="legend" id="rgb-legend" hidden><i class="r"></i>Red <i class="g"></i>Green <i class="b"></i>Blue</span>
+            </footer>
+          </section>
+
+          <!-- Stat tiles -->
+          <section class="stats" aria-label="Measurements">
+            <article class="card tile" id="tile-breath">
+              <header><svg class="icon"><use href="#i-lungs" /></svg>Breathing<span class="badge">beta</span></header>
+              <div class="tile-body">
+                <div class="tile-value"><b id="breath-value">--</b><small>/min</small></div>
+                <div class="breath-orb" id="breath-orb"><i></i></div>
+              </div>
+              <footer id="breath-foot">Needs 20 s of data</footer>
+            </article>
+            <article class="card tile" id="tile-hrv">
+              <header><svg class="icon"><use href="#i-spark" /></svg>HRV<span class="badge">beta</span>
+                <button class="tile-expand" id="hrv-expand" type="button" aria-label="Expand HRV plot"><svg class="icon"><use href="#i-expand" /></svg></button>
+              </header>
+              <div class="tile-body">
+                <div class="tile-value"><b id="hrv-value">--</b><small>ms</small></div>
+                <canvas class="mini-chart" id="poincare-canvas" aria-label="Poincaré plot"></canvas>
+              </div>
+              <footer id="hrv-foot">RMSSD · needs 30 beats</footer>
+            </article>
+            <article class="card tile" id="tile-quality">
+              <header><svg class="icon"><use href="#i-gauge" /></svg>Signal quality</header>
+              <div class="tile-body">
+                <div class="tile-value"><b id="quality-value">--</b><small>dB</small></div>
+                <div class="quality-bars" id="quality-bars"><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <footer id="quality-foot">Signal-to-noise ratio</footer>
+            </article>
+            <article class="card tile" id="tile-beat">
+              <header><svg class="icon"><use href="#i-bars" /></svg>Beat interval</header>
+              <div class="tile-body">
+                <div class="tile-value"><b id="ibi-value">--</b><small>ms</small></div>
+                <canvas class="mini-chart" id="tachogram-canvas" aria-label="Recent beat intervals"></canvas>
+              </div>
+              <footer id="ibi-foot">Time between your last two beats</footer>
+            </article>
+            <article class="card tile" id="tile-session">
+              <header><svg class="icon"><use href="#i-clock" /></svg>Session</header>
+              <div class="tile-body">
+                <div class="tile-value"><b id="session-value">0:00</b></div>
+              </div>
+              <footer id="session-foot">0 beats counted</footer>
+            </article>
+          </section>
+
+          <!-- Spectrum -->
+          <section class="card spectrum-card" aria-label="Frequency spectrum">
+            <header class="card-head">
+              <h2><svg class="icon"><use href="#i-bars" /></svg>Frequency spectrum<span class="card-sub">why this number</span></h2>
+            </header>
+            <canvas class="chart spectrum-chart" id="spectrum-canvas"></canvas>
+            <footer class="card-foot"><span id="spectrum-foot">The tallest peak is your heart rate. The shaded band counts as signal; everything else is noise.</span></footer>
+          </section>
+
+          <!-- Trend -->
+          <section class="card trend-card" aria-label="Session trend">
+            <header class="card-head">
+              <h2><svg class="icon"><use href="#i-spark" /></svg>Session trend</h2>
+            </header>
+            <canvas class="chart trend-chart" id="trend-canvas"></canvas>
+            <footer class="card-foot"><span id="trend-foot">Brighter line means higher confidence</span></footer>
+          </section>
+
+          <!-- Algorithm Lab -->
+          <section class="card lab-card" id="lab" aria-label="Algorithm Lab">
+            <header class="card-head">
+              <h2><svg class="icon"><use href="#i-flask" /></svg>Algorithm Lab<span class="card-sub">how the number is made</span></h2>
+            </header>
+            <div class="pipeline" id="pipeline">
+              <div class="node" data-node="Camera"><svg class="icon"><use href="#i-camera" /></svg><b>Camera</b><span>--</span></div>
+              <div class="node" data-node="Face"><svg class="icon"><use href="#i-mesh" /></svg><b>Face mesh</b><span>--</span></div>
+              <div class="node" data-node="Zones"><svg class="icon"><use href="#i-scan" /></svg><b>Skin zones</b><span>--</span></div>
+              <div class="node" data-node="Color"><svg class="icon"><use href="#i-palette" /></svg><b>Avg color</b><span>--</span><i class="swatch"></i></div>
+              <div class="node" data-node="Method"><svg class="icon"><use href="#i-cpu" /></svg><b>POS</b><span>1.6 s windows</span></div>
+              <div class="node" data-node="Filter"><svg class="icon"><use href="#i-filter" /></svg><b>Band-pass</b><span>42–240 BPM</span></div>
+              <div class="node" data-node="Fft"><svg class="icon"><use href="#i-bars" /></svg><b>FFT</b><span>--</span></div>
+              <div class="node result" data-node="Result"><svg class="icon"><use href="#i-heart" /></svg><b>Heart rate</b><span>--</span></div>
+            </div>
+            <div class="methods" id="methods" role="radiogroup" aria-label="Pulse extraction method"></div>
+            <div class="agreement">
+              <div class="agreement-head"><span>Method agreement</span><b id="agreement-value">--</b></div>
+              <div class="meter wide"><b id="agreement-meter"></b></div>
+              <p id="agreement-text">When three different algorithms land on the same number, you can trust it more.</p>
+            </div>
+          </section>
+
+          <!-- About -->
+          <section class="card about-card" aria-label="How it works">
+            <header class="card-head"><h2><svg class="icon"><use href="#i-info" /></svg>How it works</h2></header>
+            <ol class="steps">
+              <li><b>Track your face.</b> MediaPipe finds 478 points on your face, 30 times a second, on your phone's GPU.</li>
+              <li><b>Watch your skin.</b> The average color of your forehead and cheeks is recorded every frame.</li>
+              <li><b>Pull out the pulse.</b> POS cancels lighting and motion changes and keeps the tiny color change caused by blood flow.</li>
+              <li><b>Find the rhythm.</b> A band-pass filter keeps heart-speed changes, and an FFT finds the strongest rhythm: your heart rate.</li>
+            </ol>
+            <div class="limits">
+              <b>Good to know</b>
+              <ul>
+                <li>Works best in even light, holding still. Accuracy is typically within a few BPM when still.</li>
+                <li>Darker skin reflects less of the pulse signal; good light helps a lot. POS and CHROM handle it better than the green channel.</li>
+                <li>Breathing and HRV are experimental. This is not a medical device.</li>
+              </ul>
+            </div>
+            <p class="credits">
+              Methods: Wang et al. 2017 (POS), de Haan &amp; Jeanne 2013 (CHROM), Verkruysse et al. 2008 (green), Wu et al. 2012 (Eulerian Video Magnification).
+              Face tracking: Google MediaPipe.
+            </p>
+          </section>
+        </main>
+
+        <nav class="action-bar" id="action-bar" aria-label="Actions">
+          <button class="action" id="run-button" type="button"><svg class="icon"><use href="#i-stop" /></svg><span>Stop</span></button>
+          <button class="action" id="verify-button" type="button"><svg class="icon"><use href="#i-tap" /></svg><span>Verify</span></button>
+          <button class="action" id="light-button" type="button" aria-pressed="false"><svg class="icon"><use href="#i-light" /></svg><span>Light</span></button>
+          <button class="action" id="summary-button" type="button"><svg class="icon"><use href="#i-list" /></svg><span>Summary</span></button>
+        </nav>
+      </div>
+
+      <!-- Screen light controls -->
+      <div class="light-controls" id="light-controls" hidden>
+        <p>Turn your screen brightness all the way up.</p>
+        <button class="button dark" id="light-exit" type="button"><svg class="icon"><use href="#i-close" /></svg><span>Exit Screen Light</span></button>
+      </div>
+    </div>
+
+    <!-- Verify dialog -->
+    <dialog class="sheet-dialog" id="verify-dialog" aria-labelledby="verify-title">
+      <div class="dialog-head">
+        <h2 id="verify-title"><svg class="icon"><use href="#i-tap" /></svg>Check the accuracy</h2>
+        <button class="icon-button" data-close type="button" aria-label="Close"><svg class="icon"><use href="#i-close" /></svg></button>
+      </div>
+      <p class="dialog-lede">
+        Find your pulse on your wrist (below the thumb) or the side of your neck. Tap the circle each time you feel a beat. Keep your face in view.
+      </p>
+      <button class="tap-pad" id="tap-pad" type="button">
+        <svg class="icon"><use href="#i-heart" /></svg><span id="tap-label">Tap with each beat</span>
+      </button>
+      <div class="verify-grid">
+        <div><span>Your taps</span><b id="verify-taps">--</b></div>
+        <div><span>Camera</span><b id="verify-camera">--</b></div>
+        <div><span>Difference</span><b id="verify-diff">--</b></div>
+      </div>
+      <p class="verify-verdict" id="verify-verdict">Tap at least 8 beats for a reading. On a laptop, the space bar works too.</p>
+      <div class="dialog-actions">
+        <button class="button ghost" id="verify-reset" type="button"><svg class="icon"><use href="#i-refresh" /></svg><span>Start over</span></button>
+        <button class="button primary" data-close type="button"><svg class="icon"><use href="#i-check" /></svg><span>Done</span></button>
+      </div>
+    </dialog>
+
+    <!-- Summary dialog -->
+    <dialog class="sheet-dialog wide" id="summary-dialog" aria-labelledby="summary-title">
+      <div class="dialog-head">
+        <h2 id="summary-title"><svg class="icon"><use href="#i-list" /></svg>Session summary</h2>
+        <button class="icon-button" data-close type="button" aria-label="Close"><svg class="icon"><use href="#i-close" /></svg></button>
+      </div>
+      <div class="summary-hero">
+        <div class="summary-bpm"><b id="summary-avg">--</b><span>average BPM</span></div>
+        <dl class="summary-list" id="summary-list"></dl>
+      </div>
+      <canvas class="chart summary-chart" id="summary-canvas"></canvas>
+      <p class="summary-note" id="summary-note"></p>
+      <div class="dialog-actions">
+        <button class="button ghost" id="export-estimates" type="button"><svg class="icon"><use href="#i-download" /></svg><span>Heart rate CSV</span></button>
+        <button class="button ghost" id="export-raw" type="button"><svg class="icon"><use href="#i-download" /></svg><span>Raw color CSV</span></button>
+        <button class="button primary" id="summary-new" type="button"><svg class="icon"><use href="#i-refresh" /></svg><span>New session</span></button>
+      </div>
+    </dialog>
+
+    <!-- HRV detail dialog -->
+    <dialog class="sheet-dialog" id="hrv-dialog" aria-labelledby="hrv-title">
+      <div class="dialog-head">
+        <h2 id="hrv-title"><svg class="icon"><use href="#i-spark" /></svg>Heart rate variability</h2>
+        <button class="icon-button" data-close type="button" aria-label="Close"><svg class="icon"><use href="#i-close" /></svg></button>
+      </div>
+      <canvas class="chart poincare-large" id="poincare-large"></canvas>
+      <div class="verify-grid">
+        <div><span>RMSSD</span><b id="hrv-rmssd">--</b></div>
+        <div><span>SDNN</span><b id="hrv-sdnn">--</b></div>
+        <div><span>Mean interval</span><b id="hrv-mean">--</b></div>
+      </div>
+      <p class="dialog-lede">
+        Each dot pairs one beat interval with the next. A wide, round cloud means your heart rhythm varies from beat to beat, which usually
+        happens when you're relaxed. A tight, thin cloud means a steadier rhythm, common when stressed or exercising. Camera timing is limited
+        to 30 frames per second, so treat these numbers as a rough guide.
+      </p>
+    </dialog>
+
+    <!-- Settings -->
+    <dialog class="sheet-dialog" id="settings-dialog" aria-labelledby="settings-title">
+      <div class="dialog-head">
+        <h2 id="settings-title"><svg class="icon"><use href="#i-gear" /></svg>Settings</h2>
+        <button class="icon-button" data-close type="button" aria-label="Close"><svg class="icon"><use href="#i-close" /></svg></button>
+      </div>
+      <div class="settings">
+        <div class="setting">
+          <label>Pulse algorithm</label>
+          <div class="segmented" data-setting="Method" role="radiogroup">
+            <button type="button" role="radio" data-value="POS">POS</button>
+            <button type="button" role="radio" data-value="CHROM">CHROM</button>
+            <button type="button" role="radio" data-value="Green">Green</button>
+          </div>
+        </div>
+        <div class="setting">
+          <label>Analysis window</label>
+          <div class="segmented" data-setting="WindowSeconds" role="radiogroup">
+            <button type="button" role="radio" data-value="6">6 s</button>
+            <button type="button" role="radio" data-value="10">10 s</button>
+            <button type="button" role="radio" data-value="15">15 s</button>
+          </div>
+          <small>Shorter reacts faster; longer is steadier.</small>
+        </div>
+        <div class="setting" id="camera-setting">
+          <label for="camera-select">Camera</label>
+          <select id="camera-select"></select>
+        </div>
+        <div class="setting">
+          <label for="gain-range">Magnify strength <output id="gain-output">80×</output></label>
+          <input type="range" id="gain-range" min="20" max="200" step="10" value="80" />
+        </div>
+        <div class="setting switches">
+          <label class="switch"><input type="checkbox" data-setting="ShowMesh" /><span>Face mesh</span></label>
+          <label class="switch"><input type="checkbox" data-setting="ShowZones" /><span>Skin zones</span></label>
+          <label class="switch"><input type="checkbox" data-setting="ShowLabels" /><span>Zone labels</span></label>
+          <label class="switch"><input type="checkbox" data-setting="ReduceMotion" /><span>Reduce motion</span></label>
+        </div>
+      </div>
+      <p class="fineprint">browbrow pulse · runs locally · settings are saved on this device</p>
+    </dialog>
+  </body>
+</html>
